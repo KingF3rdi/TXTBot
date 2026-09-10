@@ -19,12 +19,12 @@ Die Web-Vorschau zeigt dasselbe Look & Feel wie in Discord (dunkle Embeds, grün
 
 Der Host soll den Code **per Git klonen und bei jedem Start/Update ziehen** — nicht als ZIP hochladen.
 
-1. Das GitHub-Repo ist: https://github.com/KingF3rdi/nexus-discord-bot
+1. Das GitHub-Repo ist: https://github.com/KingF3rdi/TXTBot
 2. Im Bot-Host-Panel das Repo eintragen:
 
 | Feld | Wert |
 | --- | --- |
-| Repository | `https://github.com/KingF3rdi/nexus-discord-bot.git` |
+| Repository | `https://github.com/KingF3rdi/TXTBot.git` |
 | Branch | `main` |
 | Startup-Datei | `index.js` |
 | Install | `npm install` |
