@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <rect width="128" height="128" fill="#0b0b0d"/>
-  <rect x="8" y="40" width="112" height="48" fill="#d4a017"/>
-  <text x="64" y="71" text-anchor="middle" font-family="Impact, Arial Black, sans-serif" font-size="22" fill="#111">TXTClan</text>
+  <defs>
+    <clipPath id="round">
+      <rect width="128" height="128" rx="28" ry="28"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#round)">
+    <rect width="128" height="128" fill="#0b0b0d"/>
+    <rect x="8" y="40" width="112" height="48" fill="#d4a017"/>
+    <text x="64" y="71" text-anchor="middle" font-family="Impact, Arial Black, sans-serif" font-size="22" fill="#111">TXTClan</text>
+  </g>
 </svg>
