@@ -230,7 +230,7 @@ export const commands = [
         .addSubcommand((s) => s
         .setName("hinzufuegen")
         .setDescription("Clan aufs Bewerbungspanel setzen")
-        .addStringOption((o) => o.setName("name").setDescription("z. B. FriendsWithMoney").setRequired(true).setMaxLength(80))
+        .addStringOption((o) => o.setName("name").setDescription("z. B. TXTClan").setRequired(true).setMaxLength(80))
         .addIntegerOption((o) => o.setName("plaetze").setDescription("Maximum, z. B. 30").setMinValue(1).setMaxValue(500))
         .addRoleOption((o) => o.setName("rolle").setDescription("Rolle bei Annahme")))
         .addSubcommand((s) => s
@@ -294,7 +294,7 @@ export const commands = [
 ].map((c) => c.toJSON());
 export function helpText() {
     return [
-        "**Nexus · Ticket, Shop, Giveaway & Vouch**",
+        "**TXTClan Bot · Ticket, Shop, Giveaway & Vouch**",
         "",
         "**Einrichtung**",
         "`/setup setzen` — Kategorie, Team-Rolle, Pay-Empfänger",

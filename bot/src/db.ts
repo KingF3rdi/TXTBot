@@ -12,8 +12,8 @@ db.exec("PRAGMA foreign_keys = ON");
 db.exec(`
 CREATE TABLE IF NOT EXISTS guilds (
   id TEXT PRIMARY KEY,
-  community_name TEXT NOT NULL DEFAULT 'Community',
-  footer TEXT NOT NULL DEFAULT 'Ticket- & Shop-System',
+  community_name TEXT NOT NULL DEFAULT 'TXTClan',
+  footer TEXT NOT NULL DEFAULT 'TXTClan Bot',
   ticket_category_id TEXT,
   staff_role_id TEXT,
   log_channel_id TEXT,
@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS spawners (
 
 CREATE TABLE IF NOT EXISTS clan_config (
   guild_id TEXT PRIMARY KEY,
-  name TEXT NOT NULL DEFAULT 'FriendsWithMoney',
+  name TEXT NOT NULL DEFAULT 'TXTClan',
   info TEXT NOT NULL DEFAULT 'Wir suchen aktive Spieler für PvP, Farm und Teamplay. Bewirb dich unten — ein Platz zählt nur einmal pro Person.',
   max_slots INTEGER NOT NULL DEFAULT 30,
   pay_recipient TEXT
@@ -385,6 +385,13 @@ function seedClansFromConfig() {
   }
 }
 seedClansFromConfig();
+
+db.prepare("UPDATE guilds SET community_name = 'TXTClan' WHERE community_name IN ('Community', 'FriendsWithMoney')").run();
+db.prepare("UPDATE guilds SET footer = 'TXTClan Bot' WHERE footer IN ('Ticket- & Shop-System')").run();
+db.prepare(
+  "UPDATE clans SET name = 'TXTClan' WHERE name = 'FriendsWithMoney' AND NOT EXISTS (SELECT 1 FROM clans o WHERE o.guild_id = clans.guild_id AND o.name = 'TXTClan')",
+).run();
+db.prepare("UPDATE clan_config SET name = 'TXTClan' WHERE name = 'FriendsWithMoney'").run();
 
 /** Früher automatisch gesetzte Demo-Preise — Staff legt Preise selbst fest. */
 db.prepare(

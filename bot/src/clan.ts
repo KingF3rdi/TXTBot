@@ -164,7 +164,7 @@ export async function cmdClan(interaction: ChatInputCommandInteraction) {
       .setStyle(TextInputStyle.Paragraph)
       .setRequired(true)
       .setMaxLength(1800)
-      .setPlaceholder("**FriendsWithMoney**\nWir suchen aktive Member.");
+      .setPlaceholder("**TXTClan**\nWir suchen aktive Member.");
     const existing = clan.info?.trim();
     if (existing) input.setValue(existing.slice(0, 1800));
     modal.addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(input));

@@ -36,12 +36,12 @@ const TICKET_META: Record<string, { emoji: string; name: string; text: string }>
   web: { emoji: "🔵", name: "Website-Support", text: "Hilfe rund um Website, Login oder technische Probleme." },
   allgemein: { emoji: "⚪", name: "Allgemeiner Support", text: "allgemeine Fragen und Anliegen." },
   fight: { emoji: "⚔️", name: "Clan-Fight", text: "Anfrage für einen Clan-Fight." },
-  allianz: { emoji: "🤝", name: "Allianz-Anfrage", text: "Anfrage für eine Allianz mit FriendsWithMoney." },
+  allianz: { emoji: "🤝", name: "Allianz-Anfrage", text: "Anfrage für eine Allianz mit TXTClan." },
   gw: { emoji: "🎉", name: "Giveaway", text: "Anliegen rund um Gewinne oder Gewinnspiele." },
 };
 
 const VOUCH_PEOPLE = [
-  { value: "hydra", label: "HydraVB | FWM", buyer: 12, seller: 3, avg: 5 },
+  { value: "hydra", label: "HydraVB | TXT", buyer: 12, seller: 3, avg: 5 },
   { value: "hugo", label: "Hugo", buyer: 4, seller: 40, avg: 4.9 },
   { value: "nether", label: "Netherite0815", buyer: 8, seller: 1, avg: 4.8 },
 ];
@@ -50,7 +50,7 @@ const PRODUCT = {
   name: "Thorfinn von Vinland Saga",
   price: 6_000_000,
   seller: "@MapSeller",
-  recipient: "FriendsWithMny",
+  recipient: "TXTClan",
   sku: "#7",
 };
 
@@ -79,7 +79,7 @@ export default function App() {
       { id: "ticket", name: "🎫TICKET" },
       { id: "map", name: "🖼️MAP-ARTS" },
       { id: "vouch", name: "🤍VOUCH" },
-      { id: "fwm", name: "🪖FRIENDSWITHMONEY" },
+      { id: "fwm", name: "🪖TXTCLAN" },
       { id: "giveaway", name: "💫GIVEAWAY" },
       { id: "services", name: "🧡SERVICES" },
       { id: "spawner", name: "🧱SPAWNER" },
@@ -147,10 +147,10 @@ export default function App() {
     <div className="flex h-full min-h-0 bg-[#313338] text-[#dbdee1]">
       <aside className="hidden w-[72px] shrink-0 flex-col items-center gap-2 bg-[#1e1f22] py-3 md:flex">
         <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-[16px] bg-[#111]">
-          <img src="/fwm-logo.svg" alt="FWM" className="h-12 w-12" />
+          <img src="/fwm-logo.svg" alt="TXTClan" className="h-12 w-12" />
         </div>
         <div className="h-[2px] w-8 rounded bg-[#3f4147]" />
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#313338] text-xl" title="Nexus">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#313338] text-xl" title="TXTClan Bot">
           🎫
         </div>
       </aside>
@@ -161,7 +161,7 @@ export default function App() {
         } absolute z-20 h-full w-[240px] flex-col bg-[#2b2d31] md:relative md:flex`}
       >
         <div className="flex h-12 items-center border-b border-black/20 px-4 shadow-sm">
-          <div className="truncate text-[16px] font-semibold text-white">FriendsWithMoney</div>
+          <div className="truncate text-[16px] font-semibold text-white">TXTClan</div>
         </div>
         <div className="flex-1 overflow-y-auto p-2 scrollbar-thin">
           <p className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-[#949ba4]">Shop & Support</p>
@@ -187,7 +187,7 @@ export default function App() {
             <img src="/fwm-logo.svg" alt="" />
           </div>
           <div className="min-w-0">
-            <div className="truncate text-sm font-medium text-white">Nexus Bot</div>
+            <div className="truncate text-sm font-medium text-white">TXTClan Bot</div>
             <div className="text-[11px] text-[#23a559]">Online</div>
           </div>
         </div>
@@ -284,7 +284,7 @@ export default function App() {
 function TicketChannel({ onSelect }: { onSelect: (key: string) => void }) {
   return (
     <DiscordMessage>
-      <Embed color="#23a559" footer="FriendsWithMoney · Ticket-System">
+      <Embed color="#23a559" footer="TXTClan · Ticket-System">
         <p>🔵 <strong>Website-Support</strong></p>
         <p className="mb-3">Hilfe rund um Website, Login oder technische Probleme.</p>
         <p>⚪ <strong>Allgemeiner Support</strong></p>
@@ -292,7 +292,7 @@ function TicketChannel({ onSelect }: { onSelect: (key: string) => void }) {
         <p>⚔️ <strong>Clan-Fight</strong></p>
         <p className="mb-3">Anfrage für einen Clan-Fight.</p>
         <p>🤝 <strong>Allianz-Anfrage</strong></p>
-        <p className="mb-3">Anfrage für eine Allianz mit FriendsWithMoney.</p>
+        <p className="mb-3">Anfrage für eine Allianz mit TXTClan.</p>
         <p>🎉 <strong>Giveaway</strong></p>
         <p className="mb-3">Anliegen rund um Gewinne oder Gewinnspiele.</p>
         <p>🔒 <strong>Wichtiger Hinweis</strong></p>
@@ -309,7 +309,7 @@ function MapChannel({ onBuy }: { onBuy: () => void }) {
   return (
     <>
       <DiscordMessage>
-        <Embed color="#23a559" footer="FriendsWithMoney · Map-Art-Verkauf">
+        <Embed color="#23a559" footer="TXTClan · Map-Art-Verkauf">
           <p className="text-[16px] font-semibold text-white">🎨 {PRODUCT.name}</p>
           <p className="mt-2">
             Hallo, liebe <strong>HugoSMP-Community!</strong>
@@ -328,7 +328,7 @@ function MapChannel({ onBuy }: { onBuy: () => void }) {
         </Embed>
       </DiscordMessage>
       <DiscordMessage>
-        <Embed color="#23a559" footer="FriendsWithMoney · Map-Art-Verkauf | heute um 12:04 Uhr" image="/mapart.svg">
+        <Embed color="#23a559" footer="TXTClan · Map-Art-Verkauf | heute um 12:04 Uhr" image="/mapart.svg">
           <p>
             Die Map-Art wird verkauft von: <Mention>{PRODUCT.seller}</Mention>
           </p>
@@ -347,19 +347,19 @@ function VouchChannel({ selected, onSelect }: { selected: string | null; onSelec
   return (
     <>
       <DiscordMessage>
-        <Embed color="#23a559" author="Verifiziertes Vouch-System · Spawner" footer="FriendsWithMoney · Spawner-Vouches: 2540 · Gesamte Vouches: 2610">
+        <Embed color="#23a559" author="Verifiziertes Vouch-System · Spawner" footer="TXTClan · Spawner-Vouches: 2540 · Gesamte Vouches: 2610">
           <p className="text-[16px] font-semibold text-white">Neue Bewertung · Vouch #2610</p>
           <p className="mt-1">{stars(5)}</p>
           <Field name="📦 Produkt" value="Skelly" />
           <Field name="⚖️ Menge" value="1" />
           <Field name="💵 Preis" value="12.300.000$" />
-          <Field name="👤 Käufer" value={<Mention>@HydraVB | FWM</Mention>} />
+          <Field name="👤 Käufer" value={<Mention>@HydraVB | TXT</Mention>} />
           <Field name="🛡️ Verkäufer" value={<Mention>@Hugo</Mention>} />
           <Field name="🗒️ Notiz" value={<blockquote className="quote">war nice</blockquote>} />
         </Embed>
       </DiscordMessage>
       <DiscordMessage>
-        <Embed color="#23a559" author="Verifiziertes Vouch-System · Shop" footer="FriendsWithMoney · Shop-Vouches: 70 · Gesamte Vouches: 2611">
+        <Embed color="#23a559" author="Verifiziertes Vouch-System · Shop" footer="TXTClan · Shop-Vouches: 70 · Gesamte Vouches: 2611">
           <p className="text-[16px] font-semibold text-white">Neue Bewertung · Vouch #2611</p>
           <p className="mt-1">{stars(5)}</p>
           <Field name="📦 Produkt" value="Thorfinn von Vinland Saga" />
@@ -371,7 +371,7 @@ function VouchChannel({ selected, onSelect }: { selected: string | null; onSelec
         </Embed>
       </DiscordMessage>
       <DiscordMessage>
-        <Embed color="#fee75c" footer="FriendsWithMoney · 40 verifizierte Profile · Seite 1 von 1">
+        <Embed color="#fee75c" footer="TXTClan · 40 verifizierte Profile · Seite 1 von 1">
           <p className="text-[16px] font-semibold text-white">🔍 Vouch-Auswertung</p>
           <p className="mt-2">
             <strong>Finde schnell die Bewertungen unserer Käufer und Verkäufer.</strong>
@@ -386,7 +386,7 @@ function VouchChannel({ selected, onSelect }: { selected: string | null; onSelec
           value={selected ?? ""}
         />
         {person ? (
-          <Embed color="#fee75c" footer="FriendsWithMoney · Vouch-Auswertung">
+          <Embed color="#fee75c" footer="TXTClan · Vouch-Auswertung">
             <p className="text-[16px] font-semibold text-white">Vouch-Statistik · {person.label}</p>
             <Field name="Als Käufer" value={`${person.buyer} Vouches`} />
             <Field name="Als Verkäufer" value={`${person.seller} Vouches`} />
@@ -404,12 +404,12 @@ function WarningChannel({ extras }: { extras: { text: string; color: string; tit
       <DiscordMessage>
         <Embed color="#ed4245">
           <p>
-            Das <strong>Faken von FriendsWithMoney-Clans und Accounts</strong> nimmt leider zu. Es gibt verschiedene
+            Das <strong>Faken von TXTClan-Accounts</strong> nimmt leider zu. Es gibt verschiedene
             Fake-Accounts, die sich als uns ausgeben.
           </p>
           <p className="mt-3">
             Seid bei Zahlungen <strong>besonders vorsichtig</strong> und prüft, ob ihr den richtigen Account ausgewählt
-            habt. Der korrekte Name lautet <Code>FriendsWithMny</Code>.
+            habt. Der korrekte Name lautet <Code>TXTClan</Code>.
           </p>
           <p className="mt-3">
             Der sicherste Weg ist, den Zahlungsbefehl <strong>direkt aus der jeweiligen Zahlungsanfrage</strong> zu
@@ -503,7 +503,7 @@ function SpawnerChannel() {
 
   return (
     <DiscordMessage>
-      <Embed color="#f0b232" author="FriendsWithMoney · Spawner-Shop" footer="FriendsWithMoney · Spawner-Shop">
+      <Embed color="#f0b232" author="TXTClan · Spawner-Shop" footer="TXTClan · Spawner-Shop">
         <p className="text-[16px] font-semibold text-white">🧱 Spawner An- & Verkauf</p>
         <p className="mt-2">
           Wir <strong>kaufen</strong> deine Spawner an und <strong>verkaufen</strong> aus dem Lager.
@@ -590,8 +590,8 @@ function SpawnerChannel() {
 
 function ClanChannel() {
   const [clans, setClans] = useState([
-    { name: "FriendsWithMoney", filled: 4, max: 30 },
-    { name: "FWM2", filled: 12, max: 30 },
+    { name: "TXTClan", filled: 4, max: 30 },
+    { name: "TXT2", filled: 12, max: 30 },
   ]);
   const [prices, setPrices] = useState<{ label: string; amount: number }[]>([]);
   const [priceLabel, setPriceLabel] = useState("");
@@ -703,7 +703,7 @@ function ClanChannel() {
   return (
     <>
       <DiscordMessage>
-        <Embed color={allFull ? "#ed4245" : "#23a559"} footer="FriendsWithMoney · Clan-System">
+        <Embed color={allFull ? "#ed4245" : "#23a559"} footer="TXTClan · Clan-System">
           <p className="text-[16px] font-semibold text-white">🤝 Clan-Bewerbung</p>
           <p className="mt-2 text-[#b5bac1]">Wähle den Clan. Team nimmt Clans mit /clan entfernen vom Panel.</p>
           {clans.length ? (
@@ -785,7 +785,7 @@ function ClanChannel() {
       </div>
       {phase !== "idle" && clans[0] && (
         <DiscordMessage>
-          <Embed color="#23a559" footer="FriendsWithMoney · Clan-Bewerbung">
+          <Embed color="#23a559" footer="TXTClan · Clan-Bewerbung">
             <p className="text-[16px] font-semibold text-white">🤝 Bewerbung · {clans[0].name}</p>
             <p className="mt-2">
               Hallo <Mention>@Du</Mention>
@@ -818,7 +818,7 @@ function ServiceChannel({ open, onSelect }: { open: number; onSelect: (name: str
   const full = open >= 10;
   return (
     <DiscordMessage>
-      <Embed color="#23a559" footer="FriendsWithMoney · Service-System | heute um 11:56 Uhr">
+      <Embed color="#23a559" footer="TXTClan · Service-System | heute um 11:56 Uhr">
         <p>🏗️ <strong>Schematic Bau Service</strong></p>
         <p className="mb-3">
           Wir bauen dein Schematic in-game. <strong>Wichtig:</strong> Bitte Welt-Download und Maße angeben.
@@ -1091,7 +1091,7 @@ function TicketView({
         <p className="mb-2 text-sm">
           <Mention>@Du</Mention> · <Mention>@Team</Mention>
         </p>
-        <Embed color="#23a559" footer="FriendsWithMoney · Bestellung">
+        <Embed color="#23a559" footer="TXTClan · Bestellung">
           <p className="text-[16px] font-semibold text-white">💳 Zahlungsanfrage</p>
           <p className="mt-2">
             Hallo <Mention>@Du</Mention>, hier ist deine Bestellung. Bitte überweise den Betrag <strong>nur</strong> mit
@@ -1126,7 +1126,7 @@ function TicketView({
       <p className="mb-2 text-sm">
         <Mention>@Du</Mention> · <Mention>@Team</Mention>
       </p>
-      <Embed color="#23a559" footer="FriendsWithMoney · Ticket-System">
+      <Embed color="#23a559" footer="TXTClan · Ticket-System">
         <p className="text-[16px] font-semibold text-white">{ticket.title}</p>
         <p className="mt-2">Hallo, beschreibe bitte dein Anliegen. Das Team wird sich so schnell wie möglich bei dir melden.</p>
         <p className="mt-2 text-[#b5bac1]">Noch kein Preis — Team: Betrag setzen, dann erscheint /pay y3zz.</p>

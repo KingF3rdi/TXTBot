@@ -1,6 +1,6 @@
-# Nexus — Discord-Bot für Tickets, Shop, Giveaways & Vouches
+# TXTClan Bot — Tickets, Shop, Giveaways & Vouches
 
-Bot im Stil eines Community-Shops: **Ticket-Panels**, **Buy-Panels** mit Gesamtpreis und kopierbarem `/pay`-Befehl, **Giveaways**, **Vouches** und **Nachrichten, die der Bot für dich sendet**. Beliebig viele Panels in verschiedene Kanäle.
+TXTClan-Community-Bot: **Ticket-Panels**, **Buy-Panels** mit Gesamtpreis und kopierbarem `/pay`-Befehl, **Giveaways**, **Vouches** und **Nachrichten, die der Bot für dich sendet**. Beliebig viele Panels in verschiedene Kanäle.
 
 Die Web-Vorschau zeigt dasselbe Look & Feel wie in Discord (dunkle Embeds, grüne Kauf-Buttons, Dropdowns). Der eigentliche Bot läuft in deinem Server, sobald ein Token gesetzt ist.
 
@@ -107,7 +107,7 @@ Im geöffneten Ticket steht z. B. bei Menge 3:
 ### Clan-Bewerbung
 
 ```
-/clan name text:FriendsWithMoney
+/clan name text:TXTClan
 /clan info text:Aktiver Money-Clan. Fairer Support, klare Preise.
 /clan plaetze anzahl:30
 /clan preis-setzen bezeichnung:Raid-Kosten betrag:3,0M

@@ -11,7 +11,7 @@ export function BotAvatar() {
 export function BotName() {
   return (
     <div className="mb-0.5 flex flex-wrap items-baseline gap-1.5">
-      <span className="text-[1rem] font-medium text-[#f2f3f5]">FriendsWithMoney</span>
+      <span className="text-[1rem] font-medium text-[#f2f3f5]">TXTClan Bot</span>
       <span className="relative top-px rounded-[3px] bg-[#5865f2] px-[4px] py-[1px] text-[10px] font-bold uppercase tracking-wide text-white">
         App
       </span>

@@ -1,8 +1,8 @@
 {
-  "name": "nexus-discord-bot",
+  "name": "txtclan-bot",
   "private": true,
-  "version": "1.0.0",
-  "description": "Discord-Bot für Tickets, Buy-Panels, Giveaways, Vouches und /pay-Zahlungsanfragen",
+  "version": "1.0.17",
+  "description": "TXTClan Bot — Tickets, Shop, Giveaways, Vouches und /pay",
   "main": "index.js",
   "type": "module",
   "engines": {

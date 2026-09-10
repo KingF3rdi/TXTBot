@@ -1,9 +1,9 @@
 {
-  "name": "nexus-bot",
-  "version": "1.0.0",
+  "name": "txtclan-bot",
+  "version": "1.0.17",
   "private": true,
   "type": "module",
-  "description": "Discord ticket, shop, giveaway and vouch bot",
+  "description": "TXTClan Bot — Tickets, Shop, Giveaways und Vouches",
   "scripts": {
     "start": "node --experimental-sqlite dist/index.js",
     "dev": "node --watch --experimental-sqlite --experimental-strip-types src/index.ts",

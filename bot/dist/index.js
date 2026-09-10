@@ -76,7 +76,11 @@ async function registerCommands() {
     }
 }
 client.once(Events.ClientReady, async (ready) => {
-    console.log(`[Nexus] Online als ${ready.user.tag} · Intents ${client.options.intents?.bitfield ?? 1}`);
+    console.log(`[TXTClan] Online als ${ready.user.tag} · Intents ${client.options.intents?.bitfield ?? 1}`);
+    ready.user.setPresence({
+        activities: [{ name: "TXTClan Bot", type: 3 }],
+        status: "online",
+    });
     await registerCommands();
     await refreshAllSpawnerPanels(client).catch((err) => console.error("Spawner-Panels konnten nicht aktualisiert werden:", err));
     await refreshAllClanPanels(client).catch((err) => console.error("Clan-Panels konnten nicht aktualisiert werden:", err));
@@ -128,7 +132,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
         }
     }
 });
-console.log("[Nexus] 1.0.16 start · Gateway-Intents: Guilds only");
+console.log("[TXTClan] 1.0.17 start · Gateway-Intents: Guilds only");
 client.login(token).catch((err) => {
     if (isDisallowedIntents(err))
         printIntentsHelp();
