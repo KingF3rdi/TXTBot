@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 export function BotAvatar() {
   return (
     <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full bg-[#111] shadow-sm">
-      <img src="/fwm-logo.svg" alt="" className="h-full w-full object-cover" />
+      <img src="/fwm-logo.svg" alt="" className="h-full w-full rounded-full object-cover" />
     </div>
   );
 }
@@ -51,7 +51,7 @@ export function Embed({
       <div className="p-3 pr-4">
         {author ? (
           <div className="mb-1 flex items-center gap-2 text-[12px] font-semibold text-[#f2f3f5]">
-            <img src="/fwm-logo.svg" alt="" className="h-6 w-6 rounded-full" />
+            <img src="/fwm-logo.svg" alt="" className="h-6 w-6 rounded-full object-cover" />
             {author}
           </div>
         ) : null}
@@ -96,7 +96,7 @@ export function DiscordButton({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`mt-1 mr-1 inline-flex h-8 items-center rounded-[3px] px-4 text-[14px] font-medium disabled:opacity-50 ${colors[variant]}`}
+      className={`mt-1 mr-1 inline-flex h-8 items-center overflow-hidden rounded-[3px] border-0 px-4 text-[14px] font-medium disabled:opacity-50 ${colors[variant]}`}
     >
       {children}
     </button>

@@ -19,11 +19,21 @@ body {
   box-sizing: border-box;
 }
 
-button,
-select,
-input,
-textarea {
-  font: inherit;
+@layer base {
+  button {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    background-color: transparent;
+    overflow: hidden;
+  }
+
+  button,
+  select,
+  input,
+  textarea {
+    font: inherit;
+  }
 }
 
 .md strong {

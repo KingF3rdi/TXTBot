@@ -147,10 +147,10 @@ export default function App() {
     <div className="flex h-full min-h-0 bg-[#313338] text-[#dbdee1]">
       <aside className="hidden w-[72px] shrink-0 flex-col items-center gap-2 bg-[#1e1f22] py-3 md:flex">
         <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-[16px] bg-[#111]">
-          <img src="/fwm-logo.svg" alt="TXTClan" className="h-12 w-12" />
+          <img src="/fwm-logo.svg" alt="TXTClan" className="h-12 w-12 overflow-hidden rounded-[16px] object-cover" />
         </div>
         <div className="h-[2px] w-8 rounded bg-[#3f4147]" />
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#313338] text-xl" title="TXTClan Bot">
+        <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-[#313338] text-xl" title="TXTClan Bot">
           🎫
         </div>
       </aside>
@@ -184,7 +184,7 @@ export default function App() {
         </div>
         <div className="flex items-center gap-2 bg-[#232428] p-2">
           <div className="h-8 w-8 overflow-hidden rounded-full bg-[#111]">
-            <img src="/fwm-logo.svg" alt="" />
+            <img src="/fwm-logo.svg" alt="" className="h-full w-full rounded-full object-cover" />
           </div>
           <div className="min-w-0">
             <div className="truncate text-sm font-medium text-white">TXTClan Bot</div>
@@ -1001,7 +1001,7 @@ function CommandsChannel({
                     key={c}
                     type="button"
                     onClick={() => setSayColor(c)}
-                    className={`h-6 w-6 rounded-full border-2 ${sayColor === c ? "border-white" : "border-transparent"}`}
+                    className={`h-6 w-6 overflow-hidden rounded-full border-2 ${sayColor === c ? "border-white" : "border-transparent"}`}
                     style={{ background: c }}
                     aria-label={c}
                   />
