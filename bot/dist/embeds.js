@@ -165,15 +165,16 @@ export function spawnerButtons() {
         .setEmoji("📤")
         .setLabel("Von uns kaufen"));
 }
-export function clanPanelEmbed(config, clans, prices) {
-    const priceLines = prices.map((p) => `• **${p.label}:** \`${formatMillions(p.amount)}\` (${formatMoney(p.amount)})`).join("\n") ||
-        "_Keine Preise. Team: `/clan preis-setzen` / `/clan preis-entfernen`_";
+function clanPriceLine(price) {
+    return price != null ? `\`${formatMillions(price)}\` (${formatMoney(price)})` : "_Kein Preis gesetzt._";
+}
+export function clanPanelEmbed(config, clans) {
     const allFull = clans.length > 0 && clans.every((c) => c.filled >= c.max_slots);
     if (!clans.length) {
         return new EmbedBuilder()
             .setColor(COLORS.gray)
-            .setTitle("🤝 Clan-Bewerbung")
-            .setDescription("Aktuell stehen **keine Clans** auf dem Panel.\nTeam: `/clan hinzufuegen name:…`")
+            .setTitle("🤝 Panel")
+            .setDescription("Aktuell stehen **keine Clans** auf dem Panel.\nTeam: `/panel hinzufuegen name:…`")
             .setFooter({ text: `${config.community_name} · Clan-System` })
             .setTimestamp();
     }
@@ -185,17 +186,17 @@ export function clanPanelEmbed(config, clans, prices) {
             : `🟢 **${clan.filled}/${clan.max_slots} Plätze**`;
         return new EmbedBuilder()
             .setColor(full ? COLORS.red : COLORS.green)
-            .setTitle(`🤝 Clan-Bewerbung · ${clan.name}`)
+            .setTitle(`🤝 Panel · ${clan.name}`)
             .setDescription([
             slotLine,
             "",
-            clan.info || "_Keine Info. `/clan info`_",
+            clan.info || "_Keine Info. `/panel info`_",
             "",
-            "**Preise**",
-            priceLines,
+            "**Preis**",
+            clanPriceLine(clan.price),
             "",
             "🔒 **Hinweis**",
-            "Jede Person zählt **nur einmal**. Team: `/clan entfernen` nimmt den Clan vom Panel.",
+            "Jede Person zählt **nur einmal**. Team: `/panel entfernen` nimmt den Clan vom Panel.",
             clan.role_id ? `Bei Annahme erhältst du die Rolle <@&${clan.role_id}>.` : "",
             full ? "\nDer Clan nimmt derzeit **keine** neuen Mitglieder auf." : "Klicke auf den Button, um dich zu bewerben.",
         ].join("\n"))
@@ -209,19 +210,16 @@ export function clanPanelEmbed(config, clans, prices) {
             ? `🔴 **${c.filled}/${c.max_slots}** voll`
             : `🟢 **${c.filled}/${c.max_slots}**`;
         const info = c.info?.trim() ? `\n${c.info.split("\n")[0]}` : "";
-        return `${slots}  **${c.name}**${info}`;
+        return `${slots}  **${c.name}** · 💰 ${clanPriceLine(c.price)}${info}`;
     })
         .join("\n\n");
     return new EmbedBuilder()
         .setColor(allFull ? COLORS.red : COLORS.green)
-        .setTitle("🤝 Clan-Bewerbung")
+        .setTitle("🤝 Panel")
         .setDescription([
-        "Wähle unten den Clan, in den du willst. Team entfernt Clans mit `/clan entfernen`.",
+        "Wähle unten den Clan, in den du willst. Team entfernt Clans mit `/panel entfernen`.",
         "",
         list,
-        "",
-        "**Preise**",
-        priceLines,
         "",
         "🔒 **Hinweis**",
         "Jede Person zählt **nur einmal** (ein Clan).",

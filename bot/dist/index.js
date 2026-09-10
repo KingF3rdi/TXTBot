@@ -64,7 +64,7 @@ async function registerCommands() {
     for (const guild of client.guilds.cache.values()) {
         try {
             await guild.commands.set(commands);
-            console.log(`Slash-Befehle für Server "${guild.name}" gesetzt (${commands.length}, inkl. /clan panel).`);
+            console.log(`Slash-Befehle für Server "${guild.name}" gesetzt (${commands.length}, inkl. /panel panel).`);
         }
         catch (err) {
             console.error(`Befehle für ${guild.name} fehlgeschlagen:`, err);
