@@ -39,6 +39,9 @@ process.on("uncaughtException", (err) => {
     console.error(err);
     process.exit(1);
 });
+process.on("unhandledRejection", (reason) => {
+    console.error("Unhandled promise rejection:", reason);
+});
 if (!token) {
     console.error(`
 ┌─────────────────────────────────────────────────────────────┐
@@ -85,7 +88,9 @@ client.once(Events.ClientReady, async (ready) => {
     await refreshAllSpawnerPanels(client).catch((err) => console.error("Spawner-Panels konnten nicht aktualisiert werden:", err));
     await refreshAllClanPanels(client).catch((err) => console.error("Clan-Panels konnten nicht aktualisiert werden:", err));
     await refreshAllServicePanels(client).catch((err) => console.error("Service-Panels konnten nicht aktualisiert werden:", err));
-    setInterval(() => tickGiveaways(client), 15_000);
+    setInterval(() => {
+        tickGiveaways(client).catch((err) => console.error("Giveaway-Tick fehlgeschlagen:", err));
+    }, 15_000);
 });
 client.on(Events.GuildCreate, async (guild) => {
     try {
