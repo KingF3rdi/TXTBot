@@ -142,10 +142,10 @@ export async function handleChatCommand(interaction: ChatInputCommandInteraction
       case "spawner-panel":
         await cmdSpawnerPanel(interaction);
         break;
-      case "clan":
+      case "panel":
         await cmdClan(interaction);
         break;
-      case "clan-panel":
+      case "panel-panel":
         await cmdClanPanel(interaction);
         break;
       case "pay":

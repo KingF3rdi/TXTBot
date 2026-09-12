@@ -14,20 +14,18 @@ import {
 import {
   countAcceptedClanMembers,
   db,
+  deleteAllClans,
   deleteClan,
-  deleteClanPrice,
   getClanById,
   getGuild,
   insertClan,
-  listClanPrices,
   listClans,
   requireGuildId,
   resolveClan,
   updateClanRow,
-  upsertClanPrice,
 } from "./db.js";
 import { clanPanelComponents, clanPanelEmbed, clanTicketControls, paymentEmbed, ticketControls } from "./embeds.js";
-import { COLORS, formatMillions, formatUserText, parsePrice, shopPayRecipient } from "./util.js";
+import { COLORS, formatMillions, formatMoney, formatUserText, parsePrice, shopPayRecipient } from "./util.js";
 import { createTicketChannel, insertTicket, isStaff, resolveTextChannel } from "./tickets.js";
 
 function panelClans(guildId: string) {
@@ -37,9 +35,8 @@ function panelClans(guildId: string) {
 function panelPayload(guildId: string) {
   const config = getGuild(guildId);
   const clans = panelClans(guildId);
-  const prices = listClanPrices(guildId);
   return {
-    embeds: [clanPanelEmbed(config, clans, prices)],
+    embeds: [clanPanelEmbed(config, clans)],
     components: clanPanelComponents(clans),
   };
 }
@@ -47,7 +44,7 @@ function panelPayload(guildId: string) {
 async function syncClanRole(guild: Guild | null, userId: string, add: boolean, roleId?: string | null) {
   if (!guild) return "";
   if (!roleId) {
-    return add ? " Keine Clan-Rolle gesetzt — `/clan rolle`." : "";
+    return add ? " Keine Clan-Rolle gesetzt — `/panel rolle`." : "";
   }
   const member = await guild.members.fetch(userId).catch(() => null);
   if (!member) return ` Mitglied <@${userId}> nicht auf dem Server, Rolle nicht ${add ? "vergeben" : "entfernt"}.`;
@@ -101,10 +98,13 @@ export async function cmdClan(interaction: ChatInputCommandInteraction) {
     const name = interaction.options.getString("name", true);
     const max = interaction.options.getInteger("plaetze") ?? 30;
     const role = interaction.options.getRole("rolle");
-    const clan = insertClan(guildId, { name, max_slots: max, role_id: role?.id ?? null });
+    const rawPreis = interaction.options.getString("preis");
+    const price = rawPreis ? parsePrice(rawPreis) : null;
+    if (rawPreis && (price == null || price <= 0)) throw new Error("Preis konnte nicht gelesen werden, z. B. `5,0M`.");
+    const clan = insertClan(guildId, { name, max_slots: max, role_id: role?.id ?? null, price });
     await refreshClanPanels(interaction.client, guildId);
     await interaction.reply({
-      content: `**${clan.name}** steht jetzt auf dem Panel (${max} Plätze). Entfernen: \`/clan entfernen name:${clan.name}\`.`,
+      content: `**${clan.name}** steht jetzt auf dem Panel (${max} Plätze${price != null ? `, ${formatMillions(price)}` : ""}). Entfernen: \`/panel entfernen name:${clan.name}\`.`,
       flags: 64,
     });
     return;
@@ -121,25 +121,57 @@ export async function cmdClan(interaction: ChatInputCommandInteraction) {
     return;
   }
 
+  if (sub === "alle-entfernen") {
+    const confirm = interaction.options.getString("bestaetigung", true).trim().toUpperCase();
+    if (confirm !== "ENTFERNEN") {
+      throw new Error("Zur Bestätigung `bestaetigung:ENTFERNEN` angeben — löscht **alle** Clans unwiderruflich.");
+    }
+    const count = deleteAllClans(guildId);
+    await refreshClanPanels(interaction.client, guildId);
+    await interaction.reply({
+      content: `**${count}** Clan(s) entfernt, samt aller Bewerbungen. Panel ist jetzt leer.`,
+      flags: 64,
+    });
+    return;
+  }
+
+  if (sub === "preis") {
+    const clan = resolveClan(guildId, which);
+    const raw = interaction.options.getString("betrag", true);
+    if (raw.trim().toUpperCase() === "STOP") {
+      updateClanRow(clan.id, guildId, { price: null });
+      await refreshClanPanels(interaction.client, guildId);
+      await interaction.reply({ content: `Preis für **${clan.name}** entfernt.`, flags: 64 });
+      return;
+    }
+    const amount = parsePrice(raw);
+    if (amount == null || amount <= 0) throw new Error("Betrag konnte nicht gelesen werden, z. B. `5,0M` (oder STOP zum Entfernen).");
+    updateClanRow(clan.id, guildId, { price: amount });
+    await refreshClanPanels(interaction.client, guildId);
+    await interaction.reply({
+      content: `Preis für **${clan.name}** ist jetzt \`${formatMillions(amount)}\` (${formatMoney(amount)}). Panel aktualisiert.`,
+      flags: 64,
+    });
+    return;
+  }
+
   if (sub === "anzeigen") {
     const clans = panelClans(guildId);
-    const prices = listClanPrices(guildId)
-      .map((p) => `• **${p.label}:** ${formatMillions(p.amount)}`)
-      .join("\n") || "_keine_";
     const body =
       clans
         .map(
           (c) =>
             `• **${c.name}** · ${c.filled}/${c.max_slots}` +
-            (c.role_id ? ` · <@&${c.role_id}>` : " · _keine Rolle_"),
+            (c.role_id ? ` · <@&${c.role_id}>` : " · _keine Rolle_") +
+            ` · ${c.price != null ? formatMillions(c.price) : "_kein Preis_"}`,
         )
-        .join("\n") || "_Keine Clans. `/clan hinzufuegen`_";
+        .join("\n") || "_Keine Clans. `/panel hinzufuegen`_";
     await interaction.reply({
       embeds: [
         new EmbedBuilder()
           .setColor(COLORS.green)
           .setTitle("Clans auf dem Panel")
-          .setDescription(`${body}\n\n**Preise**\n${prices}`),
+          .setDescription(body),
       ],
       flags: 64,
     });
@@ -200,62 +232,6 @@ export async function cmdClan(interaction: ChatInputCommandInteraction) {
     await refreshClanPanels(interaction.client, guildId);
     await interaction.reply({
       content: `Rolle für **${clan.name}** ist ${role}. Wird bei Annahme vergeben.`,
-      flags: 64,
-    });
-    return;
-  }
-
-  if (sub === "preis-setzen") {
-    const label = interaction.options.getString("bezeichnung", true).trim();
-    const raw = interaction.options.getString("betrag", true);
-    const amount = parsePrice(raw);
-    if (amount == null) {
-      const removed = deleteClanPrice(guildId, { label });
-      if (!removed) throw new Error(`Kein Preis **${label}** — nichts zu entfernen.`);
-      await refreshClanPanels(interaction.client, guildId);
-      await interaction.reply({
-        content: `Preis **${removed.label}** entfernt. Panel aktualisiert.`,
-        flags: 64,
-      });
-      return;
-    }
-    if (amount <= 0) throw new Error("Betrag muss größer als 0 sein (oder STOP zum Entfernen).");
-    upsertClanPrice(guildId, label, amount);
-    await refreshClanPanels(interaction.client, guildId);
-    await interaction.reply({
-      content: `Preis **${label}** = \`${formatMillions(amount)}\` gespeichert. Panel aktualisiert.`,
-      flags: 64,
-    });
-    return;
-  }
-
-  if (sub === "preis-liste") {
-    const body =
-      listClanPrices(guildId)
-        .map((p) => `\`${p.id}\` **${p.label}** · ${formatMillions(p.amount)}`)
-        .join("\n") || "_Keine Preise. `/clan preis-setzen` zum Festlegen._";
-    await interaction.reply({
-      embeds: [new EmbedBuilder().setColor(COLORS.green).setTitle("Clan-Preise").setDescription(body)],
-      flags: 64,
-    });
-    return;
-  }
-
-  if (sub === "preis-entfernen") {
-    const id = interaction.options.getInteger("id");
-    const label = interaction.options.getString("bezeichnung");
-    if (id == null && !label?.trim()) {
-      throw new Error("Bezeichnung oder ID angeben. `/clan preis-liste` zeigt beide.");
-    }
-    const removed = deleteClanPrice(guildId, { id, label });
-    if (!removed) {
-      throw new Error(
-        id != null ? `Preis-ID ${id} nicht gefunden.` : `Kein Preis **${label}**.`,
-      );
-    }
-    await refreshClanPanels(interaction.client, guildId);
-    await interaction.reply({
-      content: `Preis **${removed.label}** entfernt. Panel aktualisiert.`,
       flags: 64,
     });
     return;
@@ -335,7 +311,7 @@ async function setApplicationStatus(
   }
 
   if (status === "accepted") {
-    if (!clan) throw new Error("Kein Clan für diese Bewerbung. `/clan hinzufuegen`.");
+    if (!clan) throw new Error("Kein Clan für diese Bewerbung. `/panel hinzufuegen`.");
     const filled = countAcceptedClanMembers(guildId, clan.id);
     const already = existing?.status === "accepted";
     if (!already && filled >= clan.max_slots) throw new Error(`**${clan.name}** ist voll (${filled}/${clan.max_slots}).`);
@@ -384,7 +360,7 @@ export async function cmdClanPanel(interaction: ChatInputCommandInteraction) {
   const clans = panelClans(guildId);
   const summary = clans.map((c) => `${c.name} ${c.filled}/${c.max_slots}`).join(" · ") || "keine Clans";
   await interaction.reply({
-    content: `Clan-Panel in ${channel} · ${summary}\nClans runternehmen: \`/clan entfernen name:…\``,
+    content: `Clan-Panel in ${channel} · ${summary}\nClans runternehmen: \`/panel entfernen name:…\``,
     flags: 64,
   });
 }
@@ -469,9 +445,8 @@ export async function submitClanApplication(interaction: ModalSubmitInteraction)
   if (existing?.status === "accepted") throw new Error("Du bist bereits im Clan.");
   if (existing?.status === "pending") throw new Error("Du hast schon eine offene Bewerbung.");
 
-  const prices = listClanPrices(guildId);
   const shopPay = shopPayRecipient(clan.pay_recipient || config.default_pay_recipient);
-  const entry = prices[0];
+  const price = clan.price ?? null;
   const member = await interaction.guild!.members.fetch(interaction.user.id);
   const channel = await createTicketChannel({
     guild: interaction.guild!,
@@ -486,10 +461,10 @@ export async function submitClanApplication(interaction: ModalSubmitInteraction)
     user_id: interaction.user.id,
     type: "clan",
     quantity: 1,
-    unit_price: entry?.amount ?? null,
-    total: entry?.amount ?? null,
+    unit_price: price,
+    total: price,
     pay_recipient: shopPay,
-    product_name: entry ? `Clan-Eintritt · ${clan.name}` : null,
+    product_name: price != null ? `Clan-Eintritt · ${clan.name}` : null,
   });
   const now = Date.now();
   if (existing) {
@@ -518,14 +493,14 @@ export async function submitClanApplication(interaction: ModalSubmitInteraction)
       )
       .setFooter({ text: `${config.community_name} · Clan-Bewerbung` }),
   ];
-  if (entry) {
+  if (price != null) {
     embeds.push(
       paymentEmbed({
         config,
         productName: `Clan-Eintritt · ${clan.name}`,
         quantity: 1,
-        unitPrice: entry.amount,
-        total: entry.amount,
+        unitPrice: price,
+        total: price,
         sellerId: interaction.client.user.id,
         payRecipient: shopPay,
         buyerId: interaction.user.id,
@@ -536,7 +511,7 @@ export async function submitClanApplication(interaction: ModalSubmitInteraction)
   await channel.send({
     content: `${member}${config.staff_role_id ? ` · <@&${config.staff_role_id}>` : ""}`,
     embeds,
-    components: [clanTicketControls(interaction.user.id), ticketControls(ticketId, { hasPay: Boolean(entry) })],
+    components: [clanTicketControls(interaction.user.id), ticketControls(ticketId, { hasPay: price != null })],
   });
   await interaction.reply({
     content: `Bewerbung offen: ${channel}\nPlätze unverändert **${filled}/${clan.max_slots}** bis zur Annahme.`,

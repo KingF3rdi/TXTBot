@@ -219,8 +219,8 @@ export const commands = [
         .setDescription("Kanal für den Hinweis (z. B. #BENACHRICHTIGUNG)")
         .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)),
     new SlashCommandBuilder()
-        .setName("clan")
-        .setDescription("Clan-Infos, Preise, Plätze und Bewerbungen verwalten")
+        .setName("panel")
+        .setDescription("Clan-Panel: Infos, Preise, Plätze und Bewerbungen verwalten")
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addSubcommand((s) => s.setName("anzeigen").setDescription("Stand anzeigen: Plätze, Preise, Info"))
         .addSubcommand((s) => s
@@ -232,11 +232,24 @@ export const commands = [
         .setDescription("Clan aufs Bewerbungspanel setzen")
         .addStringOption((o) => o.setName("name").setDescription("z. B. TXTClan").setRequired(true).setMaxLength(80))
         .addIntegerOption((o) => o.setName("plaetze").setDescription("Maximum, z. B. 30").setMinValue(1).setMaxValue(500))
-        .addRoleOption((o) => o.setName("rolle").setDescription("Rolle bei Annahme")))
+        .addRoleOption((o) => o.setName("rolle").setDescription("Rolle bei Annahme"))
+        .addStringOption((o) => o.setName("preis").setDescription("Preis für diesen Clan, z. B. 5,0M")))
         .addSubcommand((s) => s
         .setName("entfernen")
         .setDescription("Clan vom Panel nehmen")
         .addStringOption((o) => o.setName("name").setDescription("Name auf dem Panel").setRequired(true).setMaxLength(80)))
+        .addSubcommand((s) => s
+        .setName("alle-entfernen")
+        .setDescription("ACHTUNG: entfernt ALLE Clans samt Bewerbungen unwiderruflich")
+        .addStringOption((o) => o
+        .setName("bestaetigung")
+        .setDescription("Tippe ENTFERNEN zum Bestätigen")
+        .setRequired(true)))
+        .addSubcommand((s) => s
+        .setName("preis")
+        .setDescription("Preis eines Clans setzen oder ändern (STOP = entfernen)")
+        .addStringOption((o) => o.setName("betrag").setDescription("z. B. 5,0M — STOP entfernt den Preis").setRequired(true))
+        .addStringOption((o) => o.setName("clan").setDescription("Welcher Clan, falls mehrere")))
         .addSubcommand((s) => s
         .setName("name")
         .setDescription("Clan umbenennen")
@@ -257,17 +270,6 @@ export const commands = [
         .addStringOption((o) => o.setName("name").setDescription("Minecraft-Name").setRequired(true).setMaxLength(32))
         .addStringOption((o) => o.setName("clan").setDescription("Welcher Clan, falls mehrere")))
         .addSubcommand((s) => s
-        .setName("preis-setzen")
-        .setDescription("Clan-Preis festlegen oder ändern (STOP = entfernen)")
-        .addStringOption((o) => o.setName("bezeichnung").setDescription("Name der Preiszeile, z. B. Raid-Kosten").setRequired(true).setMaxLength(80))
-        .addStringOption((o) => o.setName("betrag").setDescription("z. B. 5,0M — STOP entfernt die Zeile").setRequired(true)))
-        .addSubcommand((s) => s.setName("preis-liste").setDescription("Alle Clan-Preise anzeigen"))
-        .addSubcommand((s) => s
-        .setName("preis-entfernen")
-        .setDescription("Einen Clan-Preis entfernen")
-        .addStringOption((o) => o.setName("bezeichnung").setDescription("Name der Preiszeile").setMaxLength(80))
-        .addIntegerOption((o) => o.setName("id").setDescription("Optional: ID aus /clan preis-liste")))
-        .addSubcommand((s) => s
         .setName("rolle")
         .setDescription("Rolle, die bei Annahme der Bewerbung vergeben wird")
         .addRoleOption((o) => o.setName("rolle").setDescription("Clan-Mitgliedsrolle").setRequired(true))
@@ -286,8 +288,8 @@ export const commands = [
         .setDescription("Mitglied entfernen — Platz wird frei")
         .addUserOption((o) => o.setName("user").setDescription("Mitglied").setRequired(true))),
     new SlashCommandBuilder()
-        .setName("clan-panel")
-        .setDescription("Clan-Bewerbungspanel posten (wie /clan panel)")
+        .setName("panel-panel")
+        .setDescription("Clan-Bewerbungspanel posten (wie /panel panel)")
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addChannelOption((o) => o.setName("kanal").setDescription("Zielkanal").addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)),
     new SlashCommandBuilder().setName("help").setDescription("Alle Befehle des Bots anzeigen"),
@@ -322,13 +324,14 @@ export function helpText() {
         "`/pay` — Zahlungsanfrage manuell posten",
         "Nach dem Kauf: Bewertung per DM (Sterne), wird als Vouch gepostet",
         "",
-        "**Clan**",
-        "`/clan name` · `/clan info` (formatiert) · `/clan plaetze` — Panel-Texte und Maximum (z. B. 30)",
-        "`/clan preis-setzen` · `/clan preis-entfernen` · `/clan preis-liste` — Preise selbst festlegen, ändern, löschen",
-        "`/clan hinzufuegen` · `/clan entfernen` — Clans aufs Panel / wieder runter",
-        "`/clan panel` · `/clan-panel` — Bewerbungspanel posten",
-        "`/clan rolle` — Rolle, die bei Annahme automatisch vergeben wird",
-        "`/clan annehmen` · `/clan ablehnen` · `/clan kick` — Platz frei / belegt",
+        "**Panel (Clans)**",
+        "`/panel name` · `/panel info` (formatiert) · `/panel plaetze` — Panel-Texte und Maximum (z. B. 30)",
+        "`/panel preis` — Preis pro Clan setzen, ändern oder mit STOP entfernen",
+        "`/panel hinzufuegen` · `/panel entfernen` — Clans aufs Panel / wieder runter",
+        "`/panel alle-entfernen` — ACHTUNG: entfernt ALLE Clans unwiderruflich (Bestätigung nötig)",
+        "`/panel panel` · `/panel-panel` — Bewerbungspanel posten",
+        "`/panel rolle` — Rolle, die bei Annahme automatisch vergeben wird",
+        "`/panel annehmen` · `/panel ablehnen` · `/panel kick` — Platz frei / belegt",
         "",
         "**Giveaways & Vouches**",
         "`/giveaway starten` · `/giveaway beenden` · `/giveaway reroll`",

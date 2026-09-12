@@ -46,6 +46,13 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
+// Ohne diesen Handler crasht Node bei jeder unbehandelten Promise-Ablehnung
+// sofort und ohne sichtbaren Trace (z.B. wenn ein setInterval-Tick wirft) -
+// das war vermutlich die Ursache der wiederholten stillen Neustarts.
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled promise rejection:", reason);
+});
+
 if (!token) {
   console.error(`
 ┌─────────────────────────────────────────────────────────────┐
@@ -115,7 +122,9 @@ client.once(Events.ClientReady, async (ready) => {
   await refreshAllSpawnerPanels(client).catch((err) => console.error("Spawner-Panels konnten nicht aktualisiert werden:", err));
   await refreshAllClanPanels(client).catch((err) => console.error("Clan-Panels konnten nicht aktualisiert werden:", err));
   await refreshAllServicePanels(client).catch((err) => console.error("Service-Panels konnten nicht aktualisiert werden:", err));
-  setInterval(() => tickGiveaways(client), 15_000);
+  setInterval(() => {
+    tickGiveaways(client).catch((err) => console.error("Giveaway-Tick fehlgeschlagen:", err));
+  }, 15_000);
   console.log(`Weitere Server einladen:\n${inviteUrl(ready.user.id)}`);
 });
 
