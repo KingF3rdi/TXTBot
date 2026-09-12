@@ -1,7 +1,7 @@
 {
   "name": "txtclan-bot",
   "private": true,
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "TXTClan Bot — Tickets, Shop, Giveaways, Vouches und /pay",
   "main": "index.js",
   "type": "module",

@@ -295,6 +295,7 @@ export const commands = [
 export function helpText() {
     return [
         "**TXTClan Bot · Ticket, Shop, Giveaway & Vouch**",
+        "Läuft auf mehreren Servern gleichzeitig — Setup und Panels gelten nur für diesen Server.",
         "",
         "**Einrichtung**",
         "`/setup setzen` — Kategorie, Team-Rolle, Pay-Empfänger",

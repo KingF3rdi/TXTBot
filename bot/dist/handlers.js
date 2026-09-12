@@ -160,15 +160,18 @@ function composeModal(opts) {
 function slashChannelId(interaction) {
     return interaction.options.getChannel("kanal")?.id ?? interaction.channelId;
 }
-function saveMsgDraft(userId, draft) {
-    msgDrafts.set(userId, draft);
+function draftKey(userId, guildId) {
+    return `${guildId ?? "dm"}:${userId}`;
+}
+function saveMsgDraft(userId, guildId, draft) {
+    msgDrafts.set(draftKey(userId, guildId), draft);
 }
 async function cmdSay(interaction) {
     const channelId = slashChannelId(interaction);
     if (!channelId)
         throw new Error("Kein Zielkanal. `/sagen` in einem Textkanal nutzen oder `kanal:` setzen.");
     const asEmbed = interaction.options.getBoolean("embed") ?? false;
-    saveMsgDraft(interaction.user.id, {
+    saveMsgDraft(interaction.user.id, interaction.guildId, {
         command: "sagen",
         targetUserId: null,
         channelId,
@@ -192,7 +195,7 @@ async function cmdMsg(interaction) {
     if (!channelId && !user) {
         throw new Error("Kein Zielkanal. `/msg` in einem Textkanal nutzen oder `kanal:` setzen.");
     }
-    saveMsgDraft(interaction.user.id, {
+    saveMsgDraft(interaction.user.id, interaction.guildId, {
         command: "msg",
         targetUserId: user?.id ?? null,
         channelId,
@@ -211,7 +214,7 @@ async function cmdEmbed(interaction) {
     const channelId = slashChannelId(interaction);
     if (!channelId)
         throw new Error("Kein Zielkanal. `/embed` in einem Textkanal nutzen oder `kanal:` setzen.");
-    saveMsgDraft(interaction.user.id, {
+    saveMsgDraft(interaction.user.id, interaction.guildId, {
         command: "embed",
         targetUserId: null,
         channelId,
@@ -228,8 +231,9 @@ async function cmdEmbed(interaction) {
     }));
 }
 async function submitMsgCompose(interaction) {
-    const draft = msgDrafts.get(interaction.user.id);
-    msgDrafts.delete(interaction.user.id);
+    const key = draftKey(interaction.user.id, interaction.guildId);
+    const draft = msgDrafts.get(key);
+    msgDrafts.delete(key);
     if (!draft)
         throw new Error("Fenster abgelaufen. Bitte `/msg` nochmal ausführen.");
     const text = formatUserText(interaction.fields.getTextInputValue("text"));

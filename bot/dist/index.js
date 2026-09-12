@@ -1,12 +1,13 @@
 import dotenv from "dotenv";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { Events } from "discord.js";
+import { Events, PermissionFlagsBits } from "discord.js";
 import { client } from "./client.js";
 import { commands } from "./commands.js";
 import { handleButton, handleChatCommand, handleModal, handleSelect, handleUserSelect, refreshAllServicePanels, tickGiveaways } from "./handlers.js";
 import { refreshAllSpawnerPanels } from "./spawners.js";
 import { refreshAllClanPanels } from "./clan.js";
+import { getGuild } from "./db.js";
 const here = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ quiet: true });
 dotenv.config({ path: path.resolve(here, "../../.env"), quiet: true });
@@ -55,30 +56,49 @@ if (!token) {
 `);
     process.exit(1);
 }
+const INVITE_PERMS = PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.ManageMessages |
+    PermissionFlagsBits.EmbedLinks |
+    PermissionFlagsBits.AttachFiles |
+    PermissionFlagsBits.ReadMessageHistory |
+    PermissionFlagsBits.ManageChannels |
+    PermissionFlagsBits.ManageRoles;
+async function installGuild(guild) {
+    getGuild(guild.id);
+    await guild.commands.set(commands);
+    console.log(`Slash-Befehle für Server "${guild.name}" (${guild.id}) gesetzt · ${commands.length} Befehle.`);
+}
 async function registerCommands() {
     const names = commands.map((c) => ("name" in c ? c.name : "?")).join(", ");
-    console.log(`Registriere ${commands.length} Befehle: ${names}`);
-    for (const guild of client.guilds.cache.values()) {
+    const guilds = [...client.guilds.cache.values()];
+    console.log(`Registriere ${commands.length} Befehle auf ${guilds.length} Server(n): ${names}`);
+    for (const guild of guilds) {
         try {
-            await guild.commands.set(commands);
-            console.log(`Slash-Befehle für Server "${guild.name}" gesetzt (${commands.length}, inkl. /clan panel).`);
+            await installGuild(guild);
         }
         catch (err) {
             console.error(`Befehle für ${guild.name} fehlgeschlagen:`, err);
         }
     }
     try {
-        await client.application.commands.set(commands);
-        console.log("Globale Slash-Befehle gesetzt.");
+        await client.application.commands.set([]);
     }
     catch (err) {
-        console.error("Globale Befehle konnten nicht registriert werden:", err);
+        console.error("Globale Befehle konnten nicht geleert werden:", err);
     }
 }
+function inviteUrl(clientId) {
+    return `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=${INVITE_PERMS}&scope=bot%20applications.commands`;
+}
 client.once(Events.ClientReady, async (ready) => {
-    console.log(`[TXTClan] Online als ${ready.user.tag} · Intents ${client.options.intents?.bitfield ?? 1}`);
+    const n = ready.guilds.cache.size;
+    console.log(`[TXTClan] Online als ${ready.user.tag} · ${n} Server gleichzeitig · Intents ${client.options.intents?.bitfield ?? 1}`);
+    for (const guild of ready.guilds.cache.values()) {
+        console.log(`  · ${guild.name} (${guild.id})`);
+    }
     ready.user.setPresence({
-        activities: [{ name: "TXTClan Bot", type: 3 }],
+        activities: [{ name: `TXTClan Bot · ${n} Server`, type: 3 }],
         status: "online",
     });
     await registerCommands();
@@ -86,15 +106,29 @@ client.once(Events.ClientReady, async (ready) => {
     await refreshAllClanPanels(client).catch((err) => console.error("Clan-Panels konnten nicht aktualisiert werden:", err));
     await refreshAllServicePanels(client).catch((err) => console.error("Service-Panels konnten nicht aktualisiert werden:", err));
     setInterval(() => tickGiveaways(client), 15_000);
+    console.log(`Weitere Server einladen:\n${inviteUrl(ready.user.id)}`);
 });
 client.on(Events.GuildCreate, async (guild) => {
     try {
-        await guild.commands.set(commands);
-        console.log(`Slash-Befehle für neuen Server "${guild.name}" gesetzt.`);
+        await installGuild(guild);
+        const n = client.guilds.cache.size;
+        console.log(`Neuer Server: ${guild.name} · jetzt ${n} Server gleichzeitig.`);
+        client.user?.setPresence({
+            activities: [{ name: `TXTClan Bot · ${n} Server`, type: 3 }],
+            status: "online",
+        });
     }
     catch (err) {
         console.error(`Befehle für ${guild.name} fehlgeschlagen:`, err);
     }
+});
+client.on(Events.GuildDelete, (guild) => {
+    const n = client.guilds.cache.size;
+    console.log(`Server verlassen: ${guild.name} · noch ${n} Server.`);
+    client.user?.setPresence({
+        activities: [{ name: `TXTClan Bot · ${n} Server`, type: 3 }],
+        status: "online",
+    });
 });
 client.on(Events.Error, (err) => {
     console.error("Discord-Fehler:", err.message);
@@ -132,7 +166,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
         }
     }
 });
-console.log("[TXTClan] 1.0.17 start · Gateway-Intents: Guilds only");
+console.log("[TXTClan] 1.0.18 start · mehrere Server · Gateway-Intents: Guilds only");
 client.login(token).catch((err) => {
     if (isDisallowedIntents(err))
         printIntentsHelp();

@@ -260,15 +260,19 @@ function slashChannelId(interaction: ChatInputCommandInteraction): string | null
   return interaction.options.getChannel("kanal")?.id ?? interaction.channelId;
 }
 
-function saveMsgDraft(userId: string, draft: MsgDraft) {
-  msgDrafts.set(userId, draft);
+function draftKey(userId: string, guildId: string | null) {
+  return `${guildId ?? "dm"}:${userId}`;
+}
+
+function saveMsgDraft(userId: string, guildId: string | null, draft: MsgDraft) {
+  msgDrafts.set(draftKey(userId, guildId), draft);
 }
 
 async function cmdSay(interaction: ChatInputCommandInteraction) {
   const channelId = slashChannelId(interaction);
   if (!channelId) throw new Error("Kein Zielkanal. `/sagen` in einem Textkanal nutzen oder `kanal:` setzen.");
   const asEmbed = interaction.options.getBoolean("embed") ?? false;
-  saveMsgDraft(interaction.user.id, {
+  saveMsgDraft(interaction.user.id, interaction.guildId, {
     command: "sagen",
     targetUserId: null,
     channelId,
@@ -295,7 +299,7 @@ async function cmdMsg(interaction: ChatInputCommandInteraction) {
   if (!channelId && !user) {
     throw new Error("Kein Zielkanal. `/msg` in einem Textkanal nutzen oder `kanal:` setzen.");
   }
-  saveMsgDraft(interaction.user.id, {
+  saveMsgDraft(interaction.user.id, interaction.guildId, {
     command: "msg",
     targetUserId: user?.id ?? null,
     channelId,
@@ -316,7 +320,7 @@ async function cmdMsg(interaction: ChatInputCommandInteraction) {
 async function cmdEmbed(interaction: ChatInputCommandInteraction) {
   const channelId = slashChannelId(interaction);
   if (!channelId) throw new Error("Kein Zielkanal. `/embed` in einem Textkanal nutzen oder `kanal:` setzen.");
-  saveMsgDraft(interaction.user.id, {
+  saveMsgDraft(interaction.user.id, interaction.guildId, {
     command: "embed",
     targetUserId: null,
     channelId,
@@ -336,8 +340,9 @@ async function cmdEmbed(interaction: ChatInputCommandInteraction) {
 }
 
 async function submitMsgCompose(interaction: ModalSubmitInteraction) {
-  const draft = msgDrafts.get(interaction.user.id);
-  msgDrafts.delete(interaction.user.id);
+  const key = draftKey(interaction.user.id, interaction.guildId);
+  const draft = msgDrafts.get(key);
+  msgDrafts.delete(key);
   if (!draft) throw new Error("Fenster abgelaufen. Bitte `/msg` nochmal ausführen.");
   const text = formatUserText(interaction.fields.getTextInputValue("text"));
   if (!text.trim()) throw new Error("Nachricht ist leer.");

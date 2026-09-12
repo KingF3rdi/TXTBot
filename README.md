@@ -47,9 +47,9 @@ Nach dem ersten Start in Discord `/setup setzen` ausführen.
 ## Schnellstart (Discord)
 
 1. Anwendung auf [Discord Developer Portal](https://discord.com/developers/applications) anlegen.
-2. Unter **Bot** einen Bot erstellen, Token kopieren. **Server Members Intent** einschalten.
+2. Unter **Bot** einen Bot erstellen, Token kopieren. **Public Bot** einschalten (sonst geht nur ein Server). Privileged Intents bleiben aus.
 3. Unter **OAuth2 → URL Generator**: Scopes `bot` und `applications.commands`. Rechte u. a. Kanäle verwalten, Nachrichten senden, Embeds, Dateien, Nachrichtenverlauf, Rollen verwalten.
-4. Bot auf den Server einladen.
+4. Bot auf **beliebig viele Server** einladen — ein Bot, alle Server gleichzeitig. Jeder Server hat eigenes Setup, eigene Panels und eigene Preise (`/setup setzen` pro Server).
 5. Im Projektordner:
 
 ```bash
@@ -59,7 +59,9 @@ npm --prefix bot install
 npm run bot
 ```
 
-6. In Discord: `/setup setzen` (Ticket-Kategorie, Team-Rolle, Standard-Pay-Empfänger), danach Panels posten.
+6. In jedem Server: `/setup setzen` (Ticket-Kategorie, Team-Rolle, Standard-Pay-Empfänger), danach Panels posten.
+
+Beim Start schreibt der Bot eine **Einladungs-URL** in die Konsole. Dieselbe Anwendung bleibt auf allen Servern online; Daten sind pro Server getrennt.
 
 ## Wichtige Befehle
 
