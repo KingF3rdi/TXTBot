@@ -156,25 +156,7 @@ export async function cmdClan(interaction: ChatInputCommandInteraction) {
   }
 
   if (sub === "anzeigen") {
-    const clans = panelClans(guildId);
-    const body =
-      clans
-        .map(
-          (c) =>
-            `• **${c.name}** · ${c.filled}/${c.max_slots}` +
-            (c.role_id ? ` · <@&${c.role_id}>` : " · _keine Rolle_") +
-            ` · ${c.price != null ? formatMillions(c.price) : "_kein Preis_"}`,
-        )
-        .join("\n") || "_Keine Clans. `/panel hinzufuegen`_";
-    await interaction.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setColor(COLORS.green)
-          .setTitle("Clans auf dem Panel")
-          .setDescription(body),
-      ],
-      flags: 64,
-    });
+    await interaction.reply({ ...panelPayload(guildId), flags: 64 });
     return;
   }
 
