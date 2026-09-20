@@ -81,6 +81,10 @@ export const commands = [
         .addBooleanOption((o) => o.setName("unlimitiert").setDescription("Unbegrenzt kaufbar (Standard: ja)")))
         .addSubcommand((s) => s.setName("liste").setDescription("Alle Produkte anzeigen"))
         .addSubcommand((s) => s
+        .setName("anzeigen")
+        .setDescription("Map-Art-Panel eines Produkts nur für dich anzeigen")
+        .addIntegerOption((o) => o.setName("id").setDescription("ID aus /produkt liste").setRequired(true)))
+        .addSubcommand((s) => s
         .setName("entfernen")
         .setDescription("Produkt löschen")
         .addIntegerOption((o) => o.setName("id").setDescription("Produkt-ID").setRequired(true))),
@@ -316,6 +320,7 @@ export function helpText() {
         "",
         "**Shop / Buy-Panels**",
         "`/produkt erstellen` — Preis, Verkäufer, /pay-Empfänger",
+        "`/produkt anzeigen` — Map-Art-Panel nur für dich ansehen",
         "`/buy-panel` — Kauf-Button posten (mehrere Panels möglich)",
         "`/spawner hinzufuegen` · `/spawner setzen` · `/spawner emoji` · `/spawner entfernen`",
         "`/spawner rolle` — eigene Support-Rolle für Spawner-Tickets",

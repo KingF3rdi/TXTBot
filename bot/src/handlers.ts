@@ -484,6 +484,22 @@ async function cmdProduct(interaction: ChatInputCommandInteraction) {
     });
     return;
   }
+  if (sub === "anzeigen") {
+    const product = db
+      .prepare("SELECT * FROM products WHERE id = ? AND guild_id = ?")
+      .get(interaction.options.getInteger("id", true), interaction.guildId) as
+      | (Parameters<typeof productBuyEmbed>[1] &
+          Parameters<typeof productListingEmbed>[1] & { button_label: string })
+      | undefined;
+    if (!product) throw new Error("Produkt nicht gefunden. `/produkt liste` zeigt alle IDs.");
+    const config = getGuild(interaction.guildId);
+    await interaction.reply({
+      embeds: [productListingEmbed(config, product), productBuyEmbed(config, product)],
+      components: [buyButton(product.id, product.button_label)],
+      flags: 64,
+    });
+    return;
+  }
   if (sub === "entfernen") {
     const id = interaction.options.getInteger("id", true);
     db.prepare("DELETE FROM products WHERE id = ? AND guild_id = ?").run(id, interaction.guildId);
