@@ -65,7 +65,7 @@ export function productListingEmbed(
     .setColor(COLORS.green)
     .setTitle(`🎨 ${product.name}`)
     .setDescription(
-      `${greeting}\n\n${product.description}\n> **${product.name}**\n\n${availability}${warning}\n\n💸 **VERKÄUFER**\nDie Map-Art wird verkauft von:\n<@${product.seller_id}>\n\n💰 **Preis**\n**${formatMoney(product.price)}**`,
+      `${greeting}\n\n${product.description}\n> **${product.name}**\n\n${availability}${warning}\n\n💸 **VERKÄUFER**\nDie Map-Art wird verkauft von:\n<@${product.seller_id}>\n\n💰 **Preis**\n**${product.name}** · **${formatMoney(product.price)}**`,
     )
     .setFooter({ text: footer(config, "Map-Art-Verkauf") });
 }
