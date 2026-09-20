@@ -193,7 +193,7 @@ export function clanPanelEmbed(config, clans) {
             clan.info || "_Keine Info. `/panel info`_",
             "",
             "**Preis**",
-            clanPriceLine(clan.price),
+            `**${clan.name}** · ${clanPriceLine(clan.price)}`,
             "",
             "🔒 **Hinweis**",
             "Jede Person zählt **nur einmal**. Team: `/panel entfernen` nimmt den Clan vom Panel.",
