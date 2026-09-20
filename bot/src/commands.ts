@@ -121,7 +121,7 @@ export const commands = [
     .addSubcommand((s) =>
       s
         .setName("anzeigen")
-        .setDescription("Map-Art-Panel eines Produkts nur für dich anzeigen")
+        .setDescription("Map-Art-Panel eines Produkts in diesen Kanal senden")
         .addIntegerOption((o) => o.setName("id").setDescription("ID aus /produkt liste").setRequired(true)),
     )
     .addSubcommand((s) =>
@@ -458,7 +458,7 @@ export function helpText() {
     "",
     "**Shop / Buy-Panels**",
     "`/produkt erstellen` — Preis, Verkäufer, /pay-Empfänger",
-    "`/produkt anzeigen` — Map-Art-Panel nur für dich ansehen",
+    "`/produkt anzeigen` — Map-Art-Panel im aktuellen Kanal posten",
     "`/buy-panel` — Kauf-Button posten (mehrere Panels möglich)",
     "`/spawner hinzufuegen` · `/spawner setzen` · `/spawner emoji` · `/spawner entfernen`",
     "`/spawner rolle` — eigene Support-Rolle für Spawner-Tickets",

@@ -496,7 +496,6 @@ async function cmdProduct(interaction: ChatInputCommandInteraction) {
     await interaction.reply({
       embeds: [productListingEmbed(config, product), productBuyEmbed(config, product)],
       components: [buyButton(product.id, product.button_label)],
-      flags: 64,
     });
     return;
   }
