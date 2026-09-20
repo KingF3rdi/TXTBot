@@ -38,7 +38,7 @@ export function productBuyEmbed(config, product) {
     const embed = new EmbedBuilder()
         .setColor(COLORS.green)
         .setDescription(`Die Map-Art wird verkauft von:\n<@${product.seller_id}>`)
-        .addFields({ name: "💰 Preis", value: `**${formatMoney(product.price)}**`, inline: false }, {
+        .addFields({ name: "💰 Preis", value: `**${product.name}** · **${formatMoney(product.price)}**`, inline: false }, {
         name: "Status",
         value: product.status === "available" ? "✅ Verfügbar" : "❌ Nicht verfügbar",
         inline: true,
